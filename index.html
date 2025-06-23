@@ -11,18 +11,32 @@
   <script>
     const video = document.getElementById('video');
 
+    // Check if HLS.js is supported
     if (Hls.isSupported()) {
       const hls = new Hls();
-      hls.loadSource('master.m3u8');
+      // Full URL to the master.m3u8 file
+      hls.loadSource('https://Veki-code.github.io/Video-stream-OSCN-VA/master.m3u8');
       hls.attachMedia(video);
+
+      // Play when the manifest is parsed
       hls.on(Hls.Events.MANIFEST_PARSED, function () {
         video.play();
       });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = 'master.m3u8';
+
+      // Handle errors
+      hls.on(Hls.Events.ERROR, function (event, data) {
+        console.error('Error occurred: ', data);
+        alert('Error loading video: ' + data.details);
+      });
+    }
+    // Fallback for browsers that natively support HLS
+    else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = 'https://Veki-code.github.io/Video-stream-OSCN-VA/master.m3u8';
       video.addEventListener('loadedmetadata', function () {
         video.play();
       });
+    } else {
+      alert('HLS.js is not supported in this browser, or video is not playable.');
     }
   </script>
 </body>
